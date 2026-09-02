@@ -47,7 +47,7 @@
         <div class="system-status-bar">
             <div class="status-badge">
                 <span id="srv-dot" class="dot"></span>
-                <span id="srv-text">Đang kết nối máy chủ...</span>
+                <span id="srv-text">Đang kết nối hệ thống...</span>
             </div>
             <div class="toolbar-group">
                 <input type="text" id="filter-input" class="search-box" placeholder="Tìm nhanh công cụ..." oninput="handleFilterModules()">
@@ -89,6 +89,45 @@
         const CORE_PROTECTED = ['gmail', 'nén', 'nen', 'vi-translate', 'ocr', 'chupweb'];
         let cachedModules = [];
 
+        // Danh sách công cụ hiển thị cố định khi chạy trên GitHub Pages
+        const DEFAULT_STATIC_MODULES = [
+            {
+                folder: 'CHUPWEB',
+                title: 'Chụp Cuộn Web Full',
+                icon: '📸',
+                desc: 'Chụp cuộn toàn trang web sắc nét, hỗ trợ lưu PNG và PDF.',
+                entry: 'CHUPWEB/CHUPWEB.html'
+            },
+            {
+                folder: 'GMAIL',
+                title: 'Quản Lý Gmail',
+                icon: '✉️',
+                desc: 'Giao diện tiện ích hỗ trợ gửi và phân loại thư điện tử.',
+                entry: 'GMAIL/GMAIL.html'
+            },
+            {
+                folder: 'NÉN',
+                title: 'Nén Tệp Tin',
+                icon: '🗜️',
+                desc: 'Bộ công cụ giảm dung lượng và tối ưu hóa tệp trực tuyến.',
+                entry: 'NÉN/NEN.html'
+            },
+            {
+                folder: 'OCR',
+                title: 'Nhận Diện Chữ (OCR)',
+                icon: '🔍',
+                desc: 'Trích xuất văn bản từ hình ảnh và tài liệu scan.',
+                entry: 'OCR/OCR.html'
+            },
+            {
+                folder: 'Vi-translate',
+                title: 'Dịch Thuật Đa Ngữ',
+                icon: '🌐',
+                desc: 'Hỗ trợ dịch nhanh nội dung văn bản đa ngôn ngữ tiện lợi.',
+                entry: 'Vi-translate/Vi-translate.html'
+            }
+        ];
+
         function stripVietnameseMarks(str) {
             return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
         }
@@ -96,6 +135,7 @@
         async function refreshModules() {
             const dot = document.getElementById('srv-dot');
             const txt = document.getElementById('srv-text');
+            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
             try {
                 const res = await fetch('/api/system/modules?t=' + Date.now());
@@ -103,16 +143,23 @@
                 const modules = await res.json();
                 
                 cachedModules = modules;
-
                 dot.className = 'dot online';
                 txt.innerText = `Máy chủ: Hoạt động | ${modules.length} công cụ khả dụng`;
                 txt.style.color = '#10b981';
-
                 renderCards(cachedModules);
             } catch (e) {
-                dot.className = 'dot offline';
-                txt.innerText = 'Mất kết nối máy chủ! Vui lòng kiểm tra server.py';
-                txt.style.color = '#ef4444';
+                // Tự động chuyển sang danh mục dự phòng khi chạy trên GitHub Pages
+                if (!isLocal) {
+                    dot.className = 'dot online';
+                    txt.innerText = `GitHub Pages: Trực tuyến | ${DEFAULT_STATIC_MODULES.length} công cụ`;
+                    txt.style.color = '#10b981';
+                    cachedModules = DEFAULT_STATIC_MODULES;
+                    renderCards(cachedModules);
+                } else {
+                    dot.className = 'dot offline';
+                    txt.innerText = 'Mất kết nối máy chủ! Vui lòng kiểm tra server.py';
+                    txt.style.color = '#ef4444';
+                }
             }
         }
 
@@ -136,13 +183,17 @@
                 cardWrap.className = 'card-container';
 
                 let delBtn = '';
-                if (!CORE_PROTECTED.includes(m.folder.toLowerCase().normalize('NFC'))) {
+                const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+                if (isLocal && !CORE_PROTECTED.includes(m.folder.toLowerCase().normalize('NFC'))) {
                     delBtn = `<button class="card-del-btn" onclick="handleDeleteModule('${m.folder}', event)">✕ Xóa</button>`;
                 }
 
+                // Dùng đường dẫn tương đối để link hoạt động chuẩn xác cả trên GitHub và Local
+                const targetLink = m.entry.startsWith('/') ? m.entry.slice(1) : m.entry;
+
                 cardWrap.innerHTML = `
                     ${delBtn}
-                    <a href="/${encodeURI(m.entry)}" class="card" style="height:100%; box-sizing:border-box;">
+                    <a href="${encodeURI(targetLink)}" class="card" style="height:100%; box-sizing:border-box;">
                         <div class="card-icon">${m.icon}</div>
                         <div class="card-title">${m.title}</div>
                         <div class="card-desc">${m.desc}</div>
@@ -164,7 +215,13 @@
             renderCards(filtered);
         }
 
-        function openModuleModal() { document.getElementById('create-modal').classList.add('active'); }
+        function openModuleModal() { 
+            if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+                return alert('Tính năng tạo module chỉ khả dụng khi chạy server Python cục bộ trên máy tính!');
+            }
+            document.getElementById('create-modal').classList.add('active'); 
+        }
+
         function closeModuleModal() { document.getElementById('create-modal').classList.remove('active'); }
 
         async function handleCreateModule() {
@@ -219,7 +276,10 @@
         }
 
         refreshModules();
-        setInterval(refreshModules, 3000);
+        // Chỉ chạy lặp định kỳ khi ở môi trường local
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            setInterval(refreshModules, 3000);
+        }
     </script>
 </body>
 </html>
