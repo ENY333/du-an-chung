@@ -2,35 +2,39 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Nén Dữ Liệu Siêu Cấp</title>
-    <link rel="stylesheet" href="css/nén.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nén Dữ Liệu</title>
+    <link rel="stylesheet" href="../css/CHUNG.css">
+    <style>
+        .tool-panel {
+            max-width: 800px;
+            margin: 30px auto;
+            background: #fff;
+            padding: 24px;
+            border-radius: 10px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        }
+        .back-link { display: inline-block; text-decoration: none; color: #2563eb; font-weight: 500; margin-bottom: 16px; }
+        .dropzone {
+            border: 2px dashed #94a3b8;
+            padding: 40px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #f1f5f9;
+        }
+    </style>
 </head>
-<body>
-    <div class="container">
-        <header>
-            <a href="/CHUNG.html" class="btn-home">⬅ Trang Chủ</a>
-            <h2>Nén & Tối Ưu Dữ Liệu</h2>
-            <button id="btn-clear-all" class="btn btn-danger">Làm Sạch</button>
-        </header>
-        <div class="controls-card">
-            <button id="btn-select-files" class="btn btn-primary">📁 Chọn Tệp</button>
-            <input type="file" id="compress-input" multiple style="display:none">
-            <select id="compress-quality" class="custom-select">
-                <option value="90">Chất lượng cao (90)</option>
-                <option value="75" selected>Cân bằng (75)</option>
-                <option value="50">Nén mạnh (50)</option>
-            </select>
-            <button id="btn-start-compress" class="btn btn-primary" disabled>⚡ Bắt Đầu Nén</button>
-            <button id="btn-download-all-zip" class="btn btn-secondary" style="display:none;" onclick="downloadAllAsZip()">📦 Tải File ZIP</button>
-        </div>
-        <div class="file-list-card">
-            <div id="compress-dropzone" class="dropzone">Kéo thả PDF / Hình ảnh vào đây</div>
-            <div id="compress-queue" class="file-list"></div>
+<body style="background: #f8fafc; padding: 20px; font-family: system-ui, sans-serif;">
+    <div class="tool-panel">
+        <a href="../CHUNG.html" class="back-link">⬅ Trang Chủ</a>
+        <h2 style="margin-top: 0;">🗜️ Tối Ưu Hóa & Nén Tệp Tin</h2>
+        <p style="color: #64748b; font-size: 14px;">Giảm dung lượng hình ảnh, văn bản và các tệp tài liệu.</p>
+
+        <div class="dropzone" onclick="document.getElementById('file-zip').click()">
+            📦 Chọn hoặc kéo thả tập tin cần nén vào đây
+            <input type="file" id="file-zip" multiple style="display:none;">
         </div>
     </div>
-    <script src="js/utils.js"></script>
-    <script src="js/progress.js"></script>
-    <script src="js/chunks.js"></script>
-    <script src="js/main.js"></script>
 </body>
 </html>
