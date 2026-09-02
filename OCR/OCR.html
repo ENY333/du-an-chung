@@ -2,39 +2,44 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Nhận Diện OCR AI</title>
-    <link rel="stylesheet" href="css/base.css">
-</head>
-<body>
-    <div class="container" style="max-width:800px; margin:0 auto; padding:20px;">
-        <header style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
-            <a href="/CHUNG.html" style="text-decoration:none; color:#2563eb;">⬅ Trang Chủ</a>
-            <h2>Trích Xuất Văn Bản OCR AI</h2>
-        </header>
-        <div style="background:#fff; padding:20px; border-radius:8px;">
-            <input type="file" id="ocr-input" accept="image/*">
-            <button onclick="runOCR()" style="padding:8px 16px; background:#2563eb; color:#fff; border:none; border-radius:6px; cursor:pointer;">Nhận Diện</button>
-            <div style="margin-top:16px;">
-                <textarea id="ocr-res" style="width:100%; height:200px; padding:10px; border:1px solid #cbd5e1; border-radius:6px;" placeholder="Kết quả hiển thị ở đây..."></textarea>
-            </div>
-        </div>
-    </div>
-    <script>
-        async function runOCR() {
-            const f = document.getElementById('ocr-input').files[0];
-            if (!f) return alert('Vui lòng chọn ảnh!');
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                const res = await fetch('/api/ocr', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ image: e.target.result })
-                });
-                const data = await res.json();
-                document.getElementById('ocr-res').value = data.text || data.error;
-            };
-            reader.readAsDataURL(f);
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhận Diện Ký Tự - OCR</title>
+    <link rel="stylesheet" href="../css/CHUNG.css">
+    <style>
+        .tool-panel {
+            max-width: 800px;
+            margin: 30px auto;
+            background: #fff;
+            padding: 24px;
+            border-radius: 10px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
         }
-    </script>
+        .back-link { display: inline-block; text-decoration: none; color: #2563eb; font-weight: 500; margin-bottom: 16px; }
+        .dropzone {
+            border: 2px dashed #94a3b8;
+            padding: 30px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #f1f5f9;
+            margin-bottom: 20px;
+        }
+        .res-area { width: 100%; min-height: 120px; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; }
+    </style>
+</head>
+<body style="background: #f8fafc; padding: 20px; font-family: system-ui, sans-serif;">
+    <div class="tool-panel">
+        <a href="../CHUNG.html" class="back-link">⬅ Trang Chủ</a>
+        <h2 style="margin-top: 0;">🔍 Trích Xuất Chữ OCR Từ Ảnh</h2>
+        <p style="color: #64748b; font-size: 14px;">Tải lên hoặc dán ảnh tài liệu để nhận diện nội dung văn bản.</p>
+
+        <div class="dropzone" onclick="document.getElementById('file-input').click()">
+            📁 Bấm vào đây để chọn ảnh hoặc kéo thả ảnh vào khung
+            <input type="file" id="file-input" accept="image/*" style="display:none;">
+        </div>
+
+        <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">Kết quả trích xuất văn bản:</label>
+        <textarea class="res-area" placeholder="Nội dung chữ sau khi quét sẽ xuất hiện ở đây..."></textarea>
+    </div>
 </body>
 </html>
