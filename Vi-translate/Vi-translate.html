@@ -2,47 +2,42 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Dịch Tài Liệu Đa Luồng</title>
-    <link rel="stylesheet" href="css/Vi-translate.css">
-</head>
-<body>
-    <div class="container">
-        <header>
-            <a href="/CHUNG.html" class="btn-home">⬅ Trang Chủ</a>
-            <h2>Dịch Thuật PDF Tự Động</h2>
-        </header>
-        <div class="card">
-            <input type="file" id="trans-file" accept=".pdf">
-            <select id="trans-lang">
-                <option value="vi" selected>Tiếng Việt</option>
-                <option value="en">Tiếng Anh</option>
-            </select>
-            <button class="btn btn-primary" onclick="startTranslate()">Bắt Đầu Dịch</button>
-            <div id="trans-status" style="margin-top:10px; color:#64748b;"></div>
-        </div>
-    </div>
-    <script>
-        async function startTranslate() {
-            const f = document.getElementById('trans-file').files[0];
-            if (!f) return alert('Vui lòng chọn file PDF!');
-            document.getElementById('trans-status').innerText = 'Đang tải lên và dịch...';
-            const res = await fetch('/api/translate-chunk', {
-                method: 'POST',
-                headers: {
-                    'X-File-Id': 'trans_' + Date.now(),
-                    'X-Chunk-Index': '0',
-                    'X-Total-Chunks': '1',
-                    'X-File-Name': encodeURIComponent(f.name),
-                    'X-Target-Lang': document.getElementById('trans-lang').value
-                },
-                body: f
-            });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(await res.blob());
-            a.download = 'Translated_' + f.name;
-            a.click();
-            document.getElementById('trans-status').innerText = 'Đã dịch xong!';
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dịch Thuật Đa Ngữ</title>
+    <link rel="stylesheet" href="../css/CHUNG.css">
+    <style>
+        .tool-panel {
+            max-width: 850px;
+            margin: 30px auto;
+            background: #fff;
+            padding: 24px;
+            border-radius: 10px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
         }
-    </script>
+        .back-link { display: inline-block; text-decoration: none; color: #2563eb; font-weight: 500; margin-bottom: 16px; }
+        .translate-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+        .trans-box { width: 100%; height: 160px; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; }
+        .btn-trans { margin-top: 14px; background: #2563eb; color: #fff; border: none; padding: 10px 24px; border-radius: 6px; font-weight: 600; cursor: pointer; }
+    </style>
+</head>
+<body style="background: #f8fafc; padding: 20px; font-family: system-ui, sans-serif;">
+    <div class="tool-panel">
+        <a href="../CHUNG.html" class="back-link">⬅ Trang Chủ</a>
+        <h2 style="margin-top: 0;">🌐 Dịch Thuật Văn Bản</h2>
+        <p style="color: #64748b; font-size: 14px;">Hỗ trợ chuyển đổi nhanh ngữ nghĩa văn bản song ngữ.</p>
+
+        <div class="translate-grid">
+            <div>
+                <label style="font-size:13px; font-weight:600; display:block; margin-bottom:6px;">Văn bản gốc:</label>
+                <textarea class="trans-box" placeholder="Nhập văn bản cần dịch..."></textarea>
+            </div>
+            <div>
+                <label style="font-size:13px; font-weight:600; display:block; margin-bottom:6px;">Bản dịch:</label>
+                <textarea class="trans-box" readonly placeholder="Bản dịch hiển thị tại đây..."></textarea>
+            </div>
+        </div>
+
+        <button class="btn-trans">Dịch Ngay</button>
+    </div>
 </body>
 </html>
