@@ -36,13 +36,6 @@
             text-decoration: none;
         }
         .btn-shot:hover { background: #1d4ed8; }
-        
-        /* Mặc định ẩn nút Xuất Full Trang */
-        #btn-export-full {
-            display: none;
-            background: #1d4ed8;
-        }
-        #btn-export-full:hover { background: #1e40af; }
 
         #preview-area {
             margin-top: 24px;
@@ -70,16 +63,17 @@
         <p style="color: #64748b; margin: 0 0 16px 0;">Hỗ trợ chụp khung nhìn tab hiện tại hoặc in xuất trọn vẹn toàn bộ trang.</p>
 
         <div class="action-zone">
-            <!-- Nút bấm chọn tab ban đầu -->
+            <!-- Nút chọn tab ban đầu -->
             <button class="btn-shot" onclick="captureCurrentTab()">
                 🎥 Chọn Tab Để Chụp Ngay
             </button>
 
-            <!-- Nút này ẩn sẵn, chỉ hiện sau khi bấm chọn tab -->
+            <!-- Nút ẩn mặc định, code JS nhúng thẳng bên dưới sẽ mở ra -->
             <a id="btn-export-full" 
                href="javascript:(function(){const s=document.createElement('style');s.innerHTML='@media print{ytd-masthead,#masthead-container,header,nav,.fixed{position:static!important;}body{overflow:visible!important;}}';document.head.appendChild(s);window.print();})();" 
                class="btn-shot" 
-               title="Bấm hoặc kéo lên bookmark để xuất toàn bộ nội dung">
+               style="display: none; background: #1d4ed8;"
+               title="Bấm để in toàn bộ nội dung">
                 📥 Xuất Full Trang
             </a>
 
@@ -95,6 +89,87 @@
         </div>
     </div>
 
-    <script src="js/chupweb.js"></script>
+    <script>
+        let capturedBlob = null;
+
+        async function captureCurrentTab() {
+            const msg = document.getElementById('msg');
+            const preview = document.getElementById('preview');
+            const previewArea = document.getElementById('preview-area');
+            const exportBtn = document.getElementById('btn-export-full');
+
+            try {
+                msg.innerText = 'Vui lòng chọn tab cần chụp và bấm "Chia sẻ"...';
+                msg.style.color = '#2563eb';
+
+                const stream = await navigator.mediaDevices.getDisplayMedia({
+                    video: {
+                        displaySurface: "browser",
+                        cursor: "never"
+                    },
+                    audio: false,
+                    preferCurrentTab: false
+                });
+
+                // Hiển thị nút Xuất Full Trang ngay khi chọn tab
+                if (exportBtn) {
+                    exportBtn.style.display = 'inline-flex';
+                }
+
+                msg.innerText = '📸 Đang xử lý hình ảnh...';
+
+                const video = document.createElement('video');
+                video.srcObject = stream;
+                video.muted = true;
+                await video.play();
+
+                await new Promise(r => setTimeout(r, 400));
+
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                stream.getTracks().forEach(track => track.stop());
+
+                canvas.toBlob((blob) => {
+                    capturedBlob = blob;
+                    preview.src = URL.createObjectURL(blob);
+                    previewArea.style.display = 'block';
+                    msg.innerText = '✅ Đã chụp xong!';
+                    msg.style.color = '#10b981';
+                }, 'image/png');
+
+            } catch (err) {
+                if (err.name !== 'NotAllowedError') {
+                    msg.innerText = 'Lỗi: ' + err.message;
+                    msg.style.color = '#ef4444';
+                } else {
+                    msg.innerText = '';
+                }
+            }
+        }
+
+        function downloadImage() {
+            if (!capturedBlob) return;
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(capturedBlob);
+            a.download = `Screenshot_${Date.now()}.png`;
+            a.click();
+        }
+
+        async function copyImage() {
+            if (!capturedBlob) return;
+            try {
+                await navigator.clipboard.write([
+                    new ClipboardItem({ 'image/png': capturedBlob })
+                ]);
+                alert('Đã sao chép ảnh vào bộ nhớ tạm!');
+            } catch (e) {
+                alert('Không thể sao chép: ' + e.message);
+            }
+        }
+    </script>
 </body>
 </html>
