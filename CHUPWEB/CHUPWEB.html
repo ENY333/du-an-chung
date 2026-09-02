@@ -64,14 +64,21 @@
 <body style="background: #f1f5f9; padding: 20px; font-family: system-ui, sans-serif;">
 
     <div class="shot-card">
-        <!-- Nút quay về dùng ../ để không bị bay mất thư mục du-an-chung -->
         <a href="../CHUNG.html" style="text-decoration:none; color:#2563eb; font-weight:500;">⬅ Trang Chủ</a>
-        <h2 style="margin: 16px 0 8px 0;">📸 Chụp Tab Cốc Cốc Đang Mở (Toàn Trang)</h2>
-        <p style="color: #64748b; margin: 0 0 16px 0;">Chụp trực tiếp phiên duyệt web hiện tại, không bị văng đăng nhập và không dính con trỏ chuột.</p>
+        <h2 style="margin: 16px 0 8px 0;">📸 Xuất Toàn Bộ Trang (PDF / Ảnh Dài)</h2>
+        <p style="color: #64748b; margin: 0 0 16px 0;">Hỗ trợ lưu toàn bộ nội dung từ trên xuống dưới, không bị lặp thanh điều hướng, không dính chuột.</p>
 
-        <div class="guide-box">
-            💡 <b>Hướng dẫn:</b> Bấm <b>"Chọn Tab Để Chụp Ngay"</b> $\rightarrow$ Chuyển sang thẻ <b>"Thẻ Chrome/Cốc Cốc"</b> $\rightarrow$ Chọn đúng tab bạn muốn chụp $\rightarrow$ Bấm <b>Chia sẻ</b>. Hệ thống tự động cuộn ghi hình và ghép thành 1 tấm ảnh full trọn vẹn.
+        <div class="guide-box" style="line-height: 1.8;">
+            <b>Cách dùng nhanh nhất:</b><br>
+            1. Kéo nút màu xanh này thả lên <b>Thanh dấu trang</b> của Cốc Cốc: 
+            <a href="javascript:(function(){const s=document.createElement('style');s.innerHTML='@media print{ytd-masthead,#masthead-container,header,nav{position:static!important;}}';document.head.appendChild(s);window.print();})();" 
+               style="display:inline-block; background:#2563eb; color:#fff; padding:4px 12px; border-radius:6px; text-decoration:none; font-weight:bold; margin: 4px 0;">
+               📥 Xuất Full Trang
+            </a><br>
+            2. Mở tab trang web cần lưu (YouTube, Gemini, báo chí...).<br>
+            3. Bấm vào nút vừa kéo trên thanh dấu trang $\rightarrow$ Trình duyệt sẽ xuất ra file chuẩn xác từng trang như tài liệu bạn mong muốn!
         </div>
+    </div>
 
         <div class="action-zone">
             <button class="btn-shot" onclick="captureCurrentTab()">
