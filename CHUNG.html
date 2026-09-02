@@ -89,13 +89,13 @@
         const CORE_PROTECTED = ['gmail', 'nén', 'nen', 'vi-translate', 'ocr', 'chupweb'];
         let cachedModules = [];
 
-        // Danh sách công cụ hiển thị cố định khi chạy trên GitHub Pages
+        // Danh mục cố định sử dụng khi chạy GitHub Pages
         const DEFAULT_STATIC_MODULES = [
             {
                 folder: 'CHUPWEB',
                 title: 'Chụp Cuộn Web Full',
                 icon: '📸',
-                desc: 'Chụp cuộn toàn trang web sắc nét, hỗ trợ lưu PNG và PDF.',
+                desc: 'Chụp cuộn toàn trang web sắc nét không dính chuột.',
                 entry: 'CHUPWEB/CHUPWEB.html'
             },
             {
@@ -148,7 +148,6 @@
                 txt.style.color = '#10b981';
                 renderCards(cachedModules);
             } catch (e) {
-                // Tự động chuyển sang danh mục dự phòng khi chạy trên GitHub Pages
                 if (!isLocal) {
                     dot.className = 'dot online';
                     txt.innerText = `GitHub Pages: Trực tuyến | ${DEFAULT_STATIC_MODULES.length} công cụ`;
@@ -188,8 +187,8 @@
                     delBtn = `<button class="card-del-btn" onclick="handleDeleteModule('${m.folder}', event)">✕ Xóa</button>`;
                 }
 
-                // Dùng đường dẫn tương đối để link hoạt động chuẩn xác cả trên GitHub và Local
-                const targetLink = m.entry.startsWith('/') ? m.entry.slice(1) : m.entry;
+                // Luôn dùng đường dẫn tương đối (bỏ dấu / ở đầu)
+                const targetLink = m.entry.replace(/^\/+/, '');
 
                 cardWrap.innerHTML = `
                     ${delBtn}
@@ -217,7 +216,7 @@
 
         function openModuleModal() { 
             if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-                return alert('Tính năng tạo module chỉ khả dụng khi chạy server Python cục bộ trên máy tính!');
+                return alert('Tính năng tạo module chỉ khả dụng khi chạy server Python cục bộ!');
             }
             document.getElementById('create-modal').classList.add('active'); 
         }
@@ -276,7 +275,6 @@
         }
 
         refreshModules();
-        // Chỉ chạy lặp định kỳ khi ở môi trường local
         if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
             setInterval(refreshModules, 3000);
         }
