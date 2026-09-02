@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chụp Cuộn Toàn Trang Web</title>
-    <link rel="stylesheet" href="/css/CHUNG.css">
+    <!-- Đường dẫn lùi 1 cấp để nhận CSS chuẩn xác -->
+    <link rel="stylesheet" href="../css/CHUNG.css">
     <style>
         .shot-card {
             max-width: 900px;
@@ -63,19 +64,20 @@
 <body style="background: #f1f5f9; padding: 20px; font-family: system-ui, sans-serif;">
 
     <div class="shot-card">
-        <a href="/CHUNG.html" style="text-decoration:none; color:#2563eb; font-weight:500;">⬅ Trang Chủ</a>
+        <!-- Nút quay về dùng ../ để không bị bay mất thư mục du-an-chung -->
+        <a href="../CHUNG.html" style="text-decoration:none; color:#2563eb; font-weight:500;">⬅ Trang Chủ</a>
         <h2 style="margin: 16px 0 8px 0;">📸 Chụp Tab Cốc Cốc Đang Mở (Toàn Trang)</h2>
-        <p style="color: #64748b; margin: 0 0 16px 0;">Chụp trực tiếp phiên duyệt web hiện tại, không bị văng tài khoản Google, Gemini hay Facebook.</p>
+        <p style="color: #64748b; margin: 0 0 16px 0;">Chụp trực tiếp phiên duyệt web hiện tại, không bị văng đăng nhập và không dính con trỏ chuột.</p>
 
         <div class="guide-box">
-            💡 <b>Cách làm:</b> Bấm nút <b>"Chọn Tab Để Chụp"</b> bên dưới $\rightarrow$ Chuyển sang thẻ <b>"Thẻ Chrome/Cốc Cốc" (Chrome/Cốc Cốc Tab)</b> $\rightarrow$ Chọn tab bạn muốn chụp $\rightarrow$ Bấm <b>Chia sẻ (Share)</b>. Hệ thống sẽ chụp toàn bộ màn hình của tab đó ngay lập tức.
+            💡 <b>Hướng dẫn:</b> Bấm <b>"Chọn Tab Để Chụp Ngay"</b> $\rightarrow$ Chuyển sang thẻ <b>"Thẻ Chrome/Cốc Cốc"</b> $\rightarrow$ Chọn đúng tab bạn muốn chụp $\rightarrow$ Bấm <b>Chia sẻ</b>. Hệ thống tự động cuộn ghi hình và ghép thành 1 tấm ảnh full trọn vẹn.
         </div>
 
         <div class="action-zone">
-            <button class="btn-shot" onclick="startTabCapture()">
+            <button class="btn-shot" onclick="captureCurrentTab()">
                 🎥 Chọn Tab Để Chụp Ngay
             </button>
-            <span id="shot-status" style="font-size: 14px; color: #64748b;"></span>
+            <span id="msg" style="font-size: 14px; font-weight: 500;"></span>
         </div>
 
         <div id="preview-area">
@@ -83,7 +85,7 @@
                 <button class="btn-shot" style="background:#16a34a;" onclick="downloadImage()">💾 Tải Về Máy</button>
                 <button class="btn-shot" style="background:#475569;" onclick="copyImage()">📋 Sao Chép Ảnh</button>
             </div>
-            <img id="shot-img" src="" alt="Ảnh chụp màn hình">
+            <img id="preview" src="" alt="Ảnh chụp màn hình">
         </div>
     </div>
 
