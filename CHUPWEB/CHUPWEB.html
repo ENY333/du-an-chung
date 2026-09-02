@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chụp Cuộn Toàn Trang Web</title>
-    <!-- Đường dẫn lùi 1 cấp để nhận CSS chuẩn xác -->
     <link rel="stylesheet" href="../css/CHUNG.css">
     <style>
         .shot-card {
@@ -20,12 +19,13 @@
             gap: 12px;
             margin: 20px 0;
             align-items: center;
+            flex-wrap: wrap;
         }
         .btn-shot {
             background: #2563eb;
             color: #fff;
             border: none;
-            padding: 12px 24px;
+            padding: 10px 20px;
             font-size: 15px;
             font-weight: 600;
             border-radius: 8px;
@@ -33,26 +33,19 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            text-decoration: none;
         }
         .btn-shot:hover { background: #1d4ed8; }
-        .guide-box {
-            background: #f8fafc;
-            border-left: 4px solid #3b82f6;
-            padding: 14px 18px;
-            border-radius: 6px;
-            font-size: 14px;
-            color: #334155;
-            line-height: 1.6;
-        }
         #preview-area {
             margin-top: 24px;
             display: none;
         }
-        #shot-img {
+        #preview {
             max-width: 100%;
             border-radius: 8px;
             border: 1px solid #e2e8f0;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: block;
         }
         .btn-group {
             display: flex;
@@ -66,24 +59,21 @@
     <div class="shot-card">
         <a href="../CHUNG.html" style="text-decoration:none; color:#2563eb; font-weight:500;">⬅ Trang Chủ</a>
         <h2 style="margin: 16px 0 8px 0;">📸 Xuất Toàn Bộ Trang (PDF / Ảnh Dài)</h2>
-        <p style="color: #64748b; margin: 0 0 16px 0;">Hỗ trợ lưu toàn bộ nội dung từ trên xuống dưới, không bị lặp thanh điều hướng, không dính chuột.</p>
-
-        <div class="guide-box" style="line-height: 1.8;">
-            <b>Cách dùng nhanh nhất:</b><br>
-            1. Kéo nút màu xanh này thả lên <b>Thanh dấu trang</b> của Cốc Cốc: 
-            <a href="javascript:(function(){const s=document.createElement('style');s.innerHTML='@media print{ytd-masthead,#masthead-container,header,nav{position:static!important;}}';document.head.appendChild(s);window.print();})();" 
-               style="display:inline-block; background:#2563eb; color:#fff; padding:4px 12px; border-radius:6px; text-decoration:none; font-weight:bold; margin: 4px 0;">
-               📥 Xuất Full Trang
-            </a><br>
-            2. Mở tab trang web cần lưu (YouTube, Gemini, báo chí...).<br>
-            3. Bấm vào nút vừa kéo trên thanh dấu trang $\rightarrow$ Trình duyệt sẽ xuất ra file chuẩn xác từng trang như tài liệu bạn mong muốn!
-        </div>
-    </div>
+        <p style="color: #64748b; margin: 0 0 16px 0;">Hỗ trợ chụp khung nhìn tab hiện tại hoặc in xuất trọn vẹn toàn bộ trang.</p>
 
         <div class="action-zone">
+            <!-- Nút chụp tab hiện tại -->
             <button class="btn-shot" onclick="captureCurrentTab()">
                 🎥 Chọn Tab Để Chụp Ngay
             </button>
+
+            <!-- Nút Xuất Full Trang được đặt ngay liền kề -->
+            <a href="javascript:(function(){const s=document.createElement('style');s.innerHTML='@media print{ytd-masthead,#masthead-container,header,nav{position:static!important;}}';document.head.appendChild(s);window.print();})();" 
+               class="btn-shot" 
+               title="Kéo thả nút này lên thanh dấu trang hoặc bấm để xuất PDF">
+                📥 Xuất Full Trang
+            </a>
+
             <span id="msg" style="font-size: 14px; font-weight: 500;"></span>
         </div>
 
