@@ -10,6 +10,7 @@ async function captureCurrentTab() {
         msg.innerText = 'Vui lòng chọn tab cần chụp và bấm "Chia sẻ"...';
         msg.style.color = '#2563eb';
 
+        // Gọi hộp thoại chọn tab của trình duyệt
         const stream = await navigator.mediaDevices.getDisplayMedia({
             video: {
                 displaySurface: "browser",
@@ -19,12 +20,12 @@ async function captureCurrentTab() {
             preferCurrentTab: false
         });
 
-        // Hiện nút "Xuất Full Trang" ngay khi vừa chọn tab xong
+        // BẬT NÚT "XUẤT FULL TRANG" HIỆN LÊN NGAY KHI VỪA CHỌN TAB XONG
         if (exportBtn) {
-            exportBtn.style.display = 'inline-flex';
+            exportBtn.style.setProperty('display', 'inline-flex', 'important');
         }
 
-        msg.innerText = '📸 Đang xử lý hình ảnh...';
+        msg.innerText = '📸 Đang chụp khung hình...';
 
         const video = document.createElement('video');
         video.srcObject = stream;
@@ -33,14 +34,17 @@ async function captureCurrentTab() {
 
         await new Promise(r => setTimeout(r, 400));
 
+        // Vẽ khung hình lên Canvas
         const canvas = document.createElement('canvas');
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
+        // Đóng luồng chia sẻ màn hình ngay
         stream.getTracks().forEach(track => track.stop());
 
+        // Xuất ảnh ra preview (Không tự động tải xuống)
         canvas.toBlob((blob) => {
             capturedBlob = blob;
             preview.src = URL.createObjectURL(blob);
