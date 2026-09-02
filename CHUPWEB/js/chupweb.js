@@ -6,10 +6,9 @@ async function captureCurrentTab() {
     const previewArea = document.getElementById('preview-area');
 
     try {
-        msg.innerText = 'Đang đợi bạn chọn tab cần chụp...';
+        msg.innerText = 'Chọn tab cần chụp và bấm "Chia sẻ"...';
         msg.style.color = '#2563eb';
 
-        // Khử hoàn toàn con trỏ chuột khi chia sẻ tab
         const stream = await navigator.mediaDevices.getDisplayMedia({
             video: {
                 displaySurface: "browser",
@@ -19,58 +18,33 @@ async function captureCurrentTab() {
             preferCurrentTab: false
         });
 
-        msg.innerText = '⏳ Đang quét và cuộn lấy trọn vẹn toàn bộ trang...';
+        msg.innerText = '📸 Đang ghi lại khung hình chuẩn...';
 
         const video = document.createElement('video');
         video.srcObject = stream;
         video.muted = true;
         await video.play();
 
-        await new Promise(r => setTimeout(r, 500));
+        await new Promise(r => setTimeout(r, 400));
 
-        const vw = video.videoWidth;
-        const vh = video.videoHeight;
-        const frames = [];
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-        // Lấy 8 khung hình liên tục trong quá trình cuộn
-        const maxFrames = 8;
-        for (let i = 0; i < maxFrames; i++) {
-            const frameCanvas = document.createElement('canvas');
-            frameCanvas.width = vw;
-            frameCanvas.height = vh;
-            const fCtx = frameCanvas.getContext('2d');
-            fCtx.drawImage(video, 0, 0, vw, vh);
-            frames.push(frameCanvas);
-
-            await new Promise(r => setTimeout(r, 500));
-        }
-
-        // Đóng stream sau khi quét xong
         stream.getTracks().forEach(track => track.stop());
 
-        msg.innerText = '⚙️ Đang xử lý và ghép toàn trang...';
-
-        // Khởi tạo Canvas ghép dọc toàn bộ các khung hình
-        const finalCanvas = document.createElement('canvas');
-        finalCanvas.width = vw;
-        finalCanvas.height = vh * frames.length;
-        const ctx = finalCanvas.getContext('2d');
-
-        frames.forEach((cvs, idx) => {
-            ctx.drawImage(cvs, 0, idx * vh);
-        });
-
-        finalCanvas.toBlob((blob) => {
+        canvas.toBlob((blob) => {
             capturedBlob = blob;
             preview.src = URL.createObjectURL(blob);
             previewArea.style.display = 'block';
-            msg.innerText = '✅ Đã chụp trọn vẹn thành công!';
+            msg.innerText = '✅ Đã chụp thành công!';
             msg.style.color = '#10b981';
 
-            // Tự động tải ảnh về máy
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
-            a.download = `Full_Capture_${Date.now()}.png`;
+            a.download = `Screenshot_${Date.now()}.png`;
             a.click();
         }, 'image/png');
 
@@ -88,7 +62,7 @@ function downloadImage() {
     if (!capturedBlob) return;
     const a = document.createElement('a');
     a.href = URL.createObjectURL(capturedBlob);
-    a.download = `Full_Capture_${Date.now()}.png`;
+    a.download = `Screenshot_${Date.now()}.png`;
     a.click();
 }
 
