@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bảng Điều Khiển Công Cụ - Dynamic Hub</title>
+    <link rel="stylesheet" href="css/CHUNG.css">
+    <style>
+        .system-status-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #fff;
+            padding: 14px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+        .status-badge { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: #cbd5e1; }
+        .dot.online { background: #10b981; box-shadow: 0 0 8px #10b981; }
+        .dot.offline { background: #ef4444; }
+        .toolbar-group { display: flex; align-items: center; gap: 12px; }
+        .search-box { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; width: 220px; }
+        .btn-action-hub { background: #2563eb; color: #fff; border: none; padding: 9px 18px; border-radius: 6px; cursor: pointer; font-weight: 500; transition: background 0.2s; }
+        .btn-action-hub:hover { background: #1d4ed8; }
+        .card-container { position: relative; display: flex; flex-direction: column; }
+        .card-del-btn {
+            position: absolute; top: 10px; right: 10px; background: #fee2e2; color: #ef4444;
+            border: none; border-radius: 4px; padding: 4px 8px; font-size: 11px; cursor: pointer; z-index: 10; display: none;
+        }
+        .card-container:hover .card-del-btn { display: block; }
+        .card-del-btn:hover { background: #ef4444; color: #fff; }
+        .modal-mask {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.45); justify-content: center; align-items: center; z-index: 9999;
+        }
+        .modal-mask.active { display: flex; }
+        .modal-panel { background: #fff; padding: 24px; border-radius: 8px; width: 440px; max-width: 90%; }
+        .txt-input { width: 100%; padding: 9px 12px; margin: 6px 0 14px 0; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>BẢNG ĐIỀU KHIỂN CÔNG CỤ TÍCH HỢP</h1>
+        
+        <div class="system-status-bar">
+            <div class="status-badge">
+                <span id="srv-dot" class="dot"></span>
+                <span id="srv-text">Đang kết nối máy chủ...</span>
+            </div>
+            <div class="toolbar-group">
+                <input type="text" id="filter-input" class="search-box" placeholder="Tìm nhanh công cụ..." oninput="handleFilterModules()">
+                <button class="btn-action-hub" onclick="openModuleModal()">+ Tạo Thư Mục Module Mới</button>
+            </div>
+        </div>
+
+        <div class="grid" id="modules-grid">
+            <div style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 40px;">
+                ⏳ Đang nạp danh mục công cụ...
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Tạo Thư Mục Module Mới -->
+    <div class="modal-mask" id="create-modal">
+        <div class="modal-panel">
+            <h3 style="margin-top:0;">Tạo Module Công Cụ Mới</h3>
+            <label style="font-size:13px; font-weight:500;">Tên thư mục (ví dụ: TIEN_ICH hoặc QUAN_LY):</label>
+            <input type="text" id="in-folder" class="txt-input" placeholder="TIEN_ICH">
+            
+            <label style="font-size:13px; font-weight:500;">Tên hiển thị:</label>
+            <input type="text" id="in-title" class="txt-input" placeholder="Bộ Tiện Ích Mới">
+            
+            <label style="font-size:13px; font-weight:500;">Biểu tượng (Icon Emoji):</label>
+            <input type="text" id="in-icon" class="txt-input" value="⚡">
+            
+            <label style="font-size:13px; font-weight:500;">Mô tả chức năng:</label>
+            <input type="text" id="in-desc" class="txt-input" placeholder="Mô tả công cụ...">
+
+            <div style="display:flex; justify-content:flex-end; gap:8px;">
+                <button onclick="closeModuleModal()" style="padding:8px 14px; border:1px solid #cbd5e1; background:#fff; border-radius:6px; cursor:pointer;">Hủy</button>
+                <button onclick="handleCreateModule()" class="btn-action-hub">Tạo Module</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const CORE_PROTECTED = ['gmail', 'nén', 'nen', 'vi-translate', 'ocr', 'chupweb'];
+        let cachedModules = [];
+
+        function stripVietnameseMarks(str) {
+            return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+        }
+
+        async function refreshModules() {
+            const dot = document.getElementById('srv-dot');
+            const txt = document.getElementById('srv-text');
+
+            try {
+                const res = await fetch('/api/system/modules?t=' + Date.now());
+                if (!res.ok) throw new Error();
+                const modules = await res.json();
+                
+                cachedModules = modules;
+
+                dot.className = 'dot online';
+                txt.innerText = `Máy chủ: Hoạt động | ${modules.length} công cụ khả dụng`;
+                txt.style.color = '#10b981';
+
+                renderCards(cachedModules);
+            } catch (e) {
+                dot.className = 'dot offline';
+                txt.innerText = 'Mất kết nối máy chủ! Vui lòng kiểm tra server.py';
+                txt.style.color = '#ef4444';
+            }
+        }
+
+        function renderCards(list) {
+            const grid = document.getElementById('modules-grid');
+            grid.innerHTML = '';
+
+            if (list.length === 0) {
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color:#64748b; padding:30px;">Không tìm thấy công cụ nào phù hợp.</div>';
+                return;
+            }
+
+            const seenEntries = new Set();
+
+            list.forEach(m => {
+                const entryKey = m.entry.toLowerCase().normalize('NFC');
+                if (seenEntries.has(entryKey)) return;
+                seenEntries.add(entryKey);
+
+                const cardWrap = document.createElement('div');
+                cardWrap.className = 'card-container';
+
+                let delBtn = '';
+                if (!CORE_PROTECTED.includes(m.folder.toLowerCase().normalize('NFC'))) {
+                    delBtn = `<button class="card-del-btn" onclick="handleDeleteModule('${m.folder}', event)">✕ Xóa</button>`;
+                }
+
+                cardWrap.innerHTML = `
+                    ${delBtn}
+                    <a href="/${encodeURI(m.entry)}" class="card" style="height:100%; box-sizing:border-box;">
+                        <div class="card-icon">${m.icon}</div>
+                        <div class="card-title">${m.title}</div>
+                        <div class="card-desc">${m.desc}</div>
+                    </a>
+                `;
+                grid.appendChild(cardWrap);
+            });
+        }
+
+        function handleFilterModules() {
+            const rawQuery = document.getElementById('filter-input').value.trim();
+            const query = stripVietnameseMarks(rawQuery);
+            
+            const filtered = cachedModules.filter(m => 
+                stripVietnameseMarks(m.title).includes(query) || 
+                stripVietnameseMarks(m.folder).includes(query) || 
+                stripVietnameseMarks(m.desc).includes(query)
+            );
+            renderCards(filtered);
+        }
+
+        function openModuleModal() { document.getElementById('create-modal').classList.add('active'); }
+        function closeModuleModal() { document.getElementById('create-modal').classList.remove('active'); }
+
+        async function handleCreateModule() {
+            const folder = document.getElementById('in-folder').value.trim();
+            const title = document.getElementById('in-title').value.trim();
+            const icon = document.getElementById('in-icon').value.trim() || '⚡';
+            const desc = document.getElementById('in-desc').value.trim();
+
+            if (!folder) return alert('Vui lòng nhập tên thư mục!');
+
+            try {
+                const res = await fetch('/api/system/create-module', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ folder, title, icon, desc })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    closeModuleModal();
+                    document.getElementById('in-folder').value = '';
+                    document.getElementById('in-title').value = '';
+                    document.getElementById('in-desc').value = '';
+                    refreshModules();
+                } else {
+                    alert('Lỗi: ' + data.error);
+                }
+            } catch(e) {
+                alert('Lỗi kết nối máy chủ!');
+            }
+        }
+
+        async function handleDeleteModule(folder, e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (!confirm(`Bạn có chắc muốn xóa vĩnh viễn thư mục module [${folder}]?`)) return;
+
+            try {
+                const res = await fetch('/api/system/delete-module', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ folder })
+                });
+                if (res.ok) {
+                    refreshModules();
+                } else {
+                    const data = await res.json();
+                    alert('Lỗi: ' + data.error);
+                }
+            } catch(e) {
+                alert('Lỗi kết nối khi gửi yêu cầu xóa!');
+            }
+        }
+
+        refreshModules();
+        setInterval(refreshModules, 3000);
+    </script>
+</body>
+</html>

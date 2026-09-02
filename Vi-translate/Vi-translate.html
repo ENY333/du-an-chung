@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Dịch Tài Liệu Đa Luồng</title>
+    <link rel="stylesheet" href="css/Vi-translate.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="/CHUNG.html" class="btn-home">⬅ Trang Chủ</a>
+            <h2>Dịch Thuật PDF Tự Động</h2>
+        </header>
+        <div class="card">
+            <input type="file" id="trans-file" accept=".pdf">
+            <select id="trans-lang">
+                <option value="vi" selected>Tiếng Việt</option>
+                <option value="en">Tiếng Anh</option>
+            </select>
+            <button class="btn btn-primary" onclick="startTranslate()">Bắt Đầu Dịch</button>
+            <div id="trans-status" style="margin-top:10px; color:#64748b;"></div>
+        </div>
+    </div>
+    <script>
+        async function startTranslate() {
+            const f = document.getElementById('trans-file').files[0];
+            if (!f) return alert('Vui lòng chọn file PDF!');
+            document.getElementById('trans-status').innerText = 'Đang tải lên và dịch...';
+            const res = await fetch('/api/translate-chunk', {
+                method: 'POST',
+                headers: {
+                    'X-File-Id': 'trans_' + Date.now(),
+                    'X-Chunk-Index': '0',
+                    'X-Total-Chunks': '1',
+                    'X-File-Name': encodeURIComponent(f.name),
+                    'X-Target-Lang': document.getElementById('trans-lang').value
+                },
+                body: f
+            });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(await res.blob());
+            a.download = 'Translated_' + f.name;
+            a.click();
+            document.getElementById('trans-status').innerText = 'Đã dịch xong!';
+        }
+    </script>
+</body>
+</html>

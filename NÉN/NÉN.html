@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Nén Dữ Liệu Siêu Cấp</title>
+    <link rel="stylesheet" href="css/nén.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="/CHUNG.html" class="btn-home">⬅ Trang Chủ</a>
+            <h2>Nén & Tối Ưu Dữ Liệu</h2>
+            <button id="btn-clear-all" class="btn btn-danger">Làm Sạch</button>
+        </header>
+        <div class="controls-card">
+            <button id="btn-select-files" class="btn btn-primary">📁 Chọn Tệp</button>
+            <input type="file" id="compress-input" multiple style="display:none">
+            <select id="compress-quality" class="custom-select">
+                <option value="90">Chất lượng cao (90)</option>
+                <option value="75" selected>Cân bằng (75)</option>
+                <option value="50">Nén mạnh (50)</option>
+            </select>
+            <button id="btn-start-compress" class="btn btn-primary" disabled>⚡ Bắt Đầu Nén</button>
+            <button id="btn-download-all-zip" class="btn btn-secondary" style="display:none;" onclick="downloadAllAsZip()">📦 Tải File ZIP</button>
+        </div>
+        <div class="file-list-card">
+            <div id="compress-dropzone" class="dropzone">Kéo thả PDF / Hình ảnh vào đây</div>
+            <div id="compress-queue" class="file-list"></div>
+        </div>
+    </div>
+    <script src="js/utils.js"></script>
+    <script src="js/progress.js"></script>
+    <script src="js/chunks.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Nhận Diện OCR AI</title>
+    <link rel="stylesheet" href="css/base.css">
+</head>
+<body>
+    <div class="container" style="max-width:800px; margin:0 auto; padding:20px;">
+        <header style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
+            <a href="/CHUNG.html" style="text-decoration:none; color:#2563eb;">⬅ Trang Chủ</a>
+            <h2>Trích Xuất Văn Bản OCR AI</h2>
+        </header>
+        <div style="background:#fff; padding:20px; border-radius:8px;">
+            <input type="file" id="ocr-input" accept="image/*">
+            <button onclick="runOCR()" style="padding:8px 16px; background:#2563eb; color:#fff; border:none; border-radius:6px; cursor:pointer;">Nhận Diện</button>
+            <div style="margin-top:16px;">
+                <textarea id="ocr-res" style="width:100%; height:200px; padding:10px; border:1px solid #cbd5e1; border-radius:6px;" placeholder="Kết quả hiển thị ở đây..."></textarea>
+            </div>
+        </div>
+    </div>
+    <script>
+        async function runOCR() {
+            const f = document.getElementById('ocr-input').files[0];
+            if (!f) return alert('Vui lòng chọn ảnh!');
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const res = await fetch('/api/ocr', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image: e.target.result })
+                });
+                const data = await res.json();
+                document.getElementById('ocr-res').value = data.text || data.error;
+            };
+            reader.readAsDataURL(f);
+        }
+    </script>
+</body>
+</html>

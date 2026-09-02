@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chụp Cuộn Toàn Trang Web</title>
+    <link rel="stylesheet" href="/css/CHUNG.css">
+    <style>
+        .shot-card {
+            max-width: 900px;
+            margin: 30px auto;
+            background: #fff;
+            padding: 28px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        .action-zone {
+            display: flex;
+            gap: 12px;
+            margin: 20px 0;
+            align-items: center;
+        }
+        .btn-shot {
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-shot:hover { background: #1d4ed8; }
+        .guide-box {
+            background: #f8fafc;
+            border-left: 4px solid #3b82f6;
+            padding: 14px 18px;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #334155;
+            line-height: 1.6;
+        }
+        #preview-area {
+            margin-top: 24px;
+            display: none;
+        }
+        #shot-img {
+            max-width: 100%;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body style="background: #f1f5f9; padding: 20px; font-family: system-ui, sans-serif;">
+
+    <div class="shot-card">
+        <a href="/CHUNG.html" style="text-decoration:none; color:#2563eb; font-weight:500;">⬅ Trang Chủ</a>
+        <h2 style="margin: 16px 0 8px 0;">📸 Chụp Tab Cốc Cốc Đang Mở (Toàn Trang)</h2>
+        <p style="color: #64748b; margin: 0 0 16px 0;">Chụp trực tiếp phiên duyệt web hiện tại, không bị văng tài khoản Google, Gemini hay Facebook.</p>
+
+        <div class="guide-box">
+            💡 <b>Cách làm:</b> Bấm nút <b>"Chọn Tab Để Chụp"</b> bên dưới $\rightarrow$ Chuyển sang thẻ <b>"Thẻ Chrome/Cốc Cốc" (Chrome/Cốc Cốc Tab)</b> $\rightarrow$ Chọn tab bạn muốn chụp $\rightarrow$ Bấm <b>Chia sẻ (Share)</b>. Hệ thống sẽ chụp toàn bộ màn hình của tab đó ngay lập tức.
+        </div>
+
+        <div class="action-zone">
+            <button class="btn-shot" onclick="startTabCapture()">
+                🎥 Chọn Tab Để Chụp Ngay
+            </button>
+            <span id="shot-status" style="font-size: 14px; color: #64748b;"></span>
+        </div>
+
+        <div id="preview-area">
+            <div class="btn-group">
+                <button class="btn-shot" style="background:#16a34a;" onclick="downloadImage()">💾 Tải Về Máy</button>
+                <button class="btn-shot" style="background:#475569;" onclick="copyImage()">📋 Sao Chép Ảnh</button>
+            </div>
+            <img id="shot-img" src="" alt="Ảnh chụp màn hình">
+        </div>
+    </div>
+
+    <script src="js/chupweb.js"></script>
+</body>
+</html>

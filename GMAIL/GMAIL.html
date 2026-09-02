@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Tài Khoản Gmail</title>
+    <link rel="stylesheet" href="css/gmail.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-left">
+                <a href="/CHUNG.html" class="btn-home">⬅ Trang Chủ</a>
+                <h2>Quản Lý Tài Khoản Gmail</h2>
+            </div>
+            <div class="header-right">
+                <button class="btn btn-secondary" onclick="exportCSV()">Xuất CSV</button>
+                <button class="btn btn-secondary" onclick="exportBackup()">Xuất JSON</button>
+                <input type="file" id="import-file" style="display:none" onchange="importBackup(event)">
+                <button class="btn btn-secondary" onclick="document.getElementById('import-file').click()">Nhập JSON</button>
+                <button class="btn btn-danger" onclick="deleteSelectedBatch()">Xóa Đã Chọn</button>
+                <button class="btn btn-primary" onclick="openAddModal()">+ Thêm Tài Khoản</button>
+            </div>
+        </header>
+
+        <section class="tools-bar">
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="Tìm kiếm tài khoản..." oninput="handleSearch()">
+            </div>
+            <div class="gen-name-box">
+                <button class="btn btn-secondary" onclick="generateRandomName()">Tạo Tên Ảo</button>
+                <input type="text" id="gen-name-val" readonly placeholder="Họ và Tên ngẫu nhiên">
+                <button class="btn btn-copy-icon" onclick="copyGenName()">Chép</button>
+            </div>
+            <div class="quick-2fa-box">
+                <input type="text" id="quick-2fa-secret" placeholder="Khóa 2FA bí mật...">
+                <button class="btn btn-secondary" onclick="getQuick2FA()">Lấy Mã</button>
+                <input type="text" id="quick-2fa-code" readonly placeholder="Code" style="width: 80px; text-align: center;">
+            </div>
+        </section>
+
+        <div class="table-container">
+            <table class="account-table">
+                <thead>
+                    <tr>
+                        <th style="width: 30px;"><input type="checkbox" onchange="toggleSelectAll(this)"></th>
+                        <th style="width: 40px;">STT</th>
+                        <th>Họ Và Tên</th>
+                        <th>Email</th>
+                        <th>Mật Khẩu</th>
+                        <th>Email Khôi Phục</th>
+                        <th>SĐT</th>
+                        <th style="width: 140px;">Mã 2FA</th>
+                        <th>Ghi Chú</th>
+                        <th style="width: 100px;">Hành Động</th>
+                    </tr>
+                </thead>
+                <tbody id="account-tbody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal" id="account-modal">
+        <div class="modal-content">
+            <h3 id="modal-title">Thêm Mới Tài Khoản</h3>
+            <input type="hidden" id="edit-index">
+            <div class="form-group">
+                <label>Họ Và Tên</label>
+                <input type="text" id="inp-name" placeholder="Nguyễn Văn A">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="inp-email" placeholder="example@gmail.com">
+            </div>
+            <div class="form-group">
+                <label>Mật Khẩu</label>
+                <input type="text" id="inp-pass" placeholder="••••••••">
+            </div>
+            <div class="form-group">
+                <label>Email Khôi Phục</label>
+                <input type="email" id="inp-recovery" placeholder="recovery@gmail.com">
+            </div>
+            <div class="form-group">
+                <label>SĐT Khôi Phục</label>
+                <input type="text" id="inp-phone" placeholder="0987654321">
+            </div>
+            <div class="form-group">
+                <label>Khóa 2FA (Secret Key)</label>
+                <input type="text" id="inp-2fa" placeholder="JBSWY3DPEHPK3PXP">
+            </div>
+            <div class="form-group">
+                <label>Ghi Chú</label>
+                <input type="text" id="inp-note" placeholder="Ghi chú...">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Hủy</button>
+                <button class="btn btn-primary" onclick="saveAccount()">Lưu Dữ Liệu</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/2fa.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/backup.js"></script>
+    <script src="js/account.js"></script>
+</body>
+</html>
