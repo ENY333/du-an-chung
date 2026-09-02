@@ -1,17 +1,15 @@
 let capturedBlob = null;
 
 async function captureCurrentTab() {
-    const msg = document.getElementById('msg') || document.getElementById('shot-status');
-    const preview = document.getElementById('preview') || document.getElementById('shot-img');
+    const msg = document.getElementById('msg');
+    const preview = document.getElementById('preview');
     const previewArea = document.getElementById('preview-area');
 
     try {
-        if (msg) {
-            msg.innerText = 'Vui lòng chọn tab cần chụp và bấm "Chia sẻ"...';
-            msg.style.color = '#2563eb';
-        }
+        msg.innerText = 'Đang đợi bạn chọn tab cần chụp...';
+        msg.style.color = '#2563eb';
 
-        // Tắt con trỏ chuột tuyệt đối khi quay tab
+        // Khử hoàn toàn con trỏ chuột khi chia sẻ tab
         const stream = await navigator.mediaDevices.getDisplayMedia({
             video: {
                 displaySurface: "browser",
@@ -21,7 +19,7 @@ async function captureCurrentTab() {
             preferCurrentTab: false
         });
 
-        if (msg) msg.innerText = '⏳ Đang quét và cuộn lấy trọn vẹn toàn bộ trang...';
+        msg.innerText = '⏳ Đang quét và cuộn lấy trọn vẹn toàn bộ trang...';
 
         const video = document.createElement('video');
         video.srcObject = stream;
@@ -34,8 +32,8 @@ async function captureCurrentTab() {
         const vh = video.videoHeight;
         const frames = [];
 
-        // Lấy liên tục các khung hình trong quá trình cuộn
-        const maxFrames = 10;
+        // Lấy 8 khung hình liên tục trong quá trình cuộn
+        const maxFrames = 8;
         for (let i = 0; i < maxFrames; i++) {
             const frameCanvas = document.createElement('canvas');
             frameCanvas.width = vw;
@@ -44,14 +42,15 @@ async function captureCurrentTab() {
             fCtx.drawImage(video, 0, 0, vw, vh);
             frames.push(frameCanvas);
 
-            // Thời gian giãn cách để người dùng cuộn xem nội dung hoặc tải tiếp
-            await new Promise(r => setTimeout(r, 600));
+            await new Promise(r => setTimeout(r, 500));
         }
 
-        // Dừng chia sẻ màn hình
+        // Đóng stream sau khi quét xong
         stream.getTracks().forEach(track => track.stop());
 
-        // Ghép tự động toàn bộ dữ liệu thành 1 tấm ảnh duy nhất
+        msg.innerText = '⚙️ Đang xử lý và ghép toàn trang...';
+
+        // Khởi tạo Canvas ghép dọc toàn bộ các khung hình
         const finalCanvas = document.createElement('canvas');
         finalCanvas.width = vw;
         finalCanvas.height = vh * frames.length;
@@ -63,27 +62,44 @@ async function captureCurrentTab() {
 
         finalCanvas.toBlob((blob) => {
             capturedBlob = blob;
-            if (preview) {
-                preview.src = URL.createObjectURL(blob);
-                preview.style.display = 'block';
-            }
-            if (previewArea) previewArea.style.display = 'block';
-            if (msg) {
-                msg.innerText = '✅ Đã chụp trọn vẹn thành công!';
-                msg.style.color = '#16a34a';
-            }
+            preview.src = URL.createObjectURL(blob);
+            previewArea.style.display = 'block';
+            msg.innerText = '✅ Đã chụp trọn vẹn thành công!';
+            msg.style.color = '#10b981';
 
-            // Tự tải ảnh Full về máy
+            // Tự động tải ảnh về máy
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
-            a.download = `Full_Chat_${Date.now()}.png`;
+            a.download = `Full_Capture_${Date.now()}.png`;
             a.click();
         }, 'image/png');
 
     } catch (err) {
-        if (msg) {
-            msg.innerText = 'Đã hủy hoặc gặp lỗi: ' + err.message;
-            msg.style.color = '#dc2626';
+        if (err.name !== 'NotAllowedError') {
+            msg.innerText = 'Lỗi: ' + err.message;
+            msg.style.color = '#ef4444';
+        } else {
+            msg.innerText = '';
         }
+    }
+}
+
+function downloadImage() {
+    if (!capturedBlob) return;
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(capturedBlob);
+    a.download = `Full_Capture_${Date.now()}.png`;
+    a.click();
+}
+
+async function copyImage() {
+    if (!capturedBlob) return;
+    try {
+        await navigator.clipboard.write([
+            new ClipboardItem({ 'image/png': capturedBlob })
+        ]);
+        alert('Đã sao chép ảnh vào bộ nhớ tạm!');
+    } catch (e) {
+        alert('Không thể sao chép: ' + e.message);
     }
 }
