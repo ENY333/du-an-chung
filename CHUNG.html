@@ -1,284 +1,89 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
 <head>
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23ef4444'/%3E%3Cstop offset='50%25' stop-color='%23a855f7'/%3E%3Cstop offset='100%25' stop-color='%23581c87'/%3E%3C/linearGradient%3E%3ClinearGradient id='lt' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23fbcfe8'/%3E%3Cstop offset='100%25' stop-color='%23ffffff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='8' y='8' width='112' height='112' rx='28' fill='url(%23bg)'/%3E%3Ccircle cx='64' cy='64' r='32' fill='none' stroke='%23f472b6' stroke-width='6' stroke-dasharray='10 6' opacity='0.85'/%3E%3Ccircle cx='64' cy='64' r='22' fill='%233b0764' opacity='0.7'/%3E%3Cpolygon points='68,26 44,68 62,68 60,102 84,60 66,60' fill='url(%23lt)'/%3E%3C/svg%3E">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bảng Điều Khiển Công Cụ - Dynamic Hub</title>
-    <link rel="stylesheet" href="css/CHUNG.css">
-    <style>
-        .system-status-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #fff;
-            padding: 14px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-        }
-        .status-badge { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; }
-        .dot { width: 10px; height: 10px; border-radius: 50%; background: #cbd5e1; }
-        .dot.online { background: #10b981; box-shadow: 0 0 8px #10b981; }
-        .dot.offline { background: #ef4444; }
-        .toolbar-group { display: flex; align-items: center; gap: 12px; }
-        .search-box { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; width: 220px; }
-        .btn-action-hub { background: #2563eb; color: #fff; border: none; padding: 9px 18px; border-radius: 6px; cursor: pointer; font-weight: 500; transition: background 0.2s; }
-        .btn-action-hub:hover { background: #1d4ed8; }
-        .card-container { position: relative; display: flex; flex-direction: column; }
-        .card-del-btn {
-            position: absolute; top: 10px; right: 10px; background: #fee2e2; color: #ef4444;
-            border: none; border-radius: 4px; padding: 4px 8px; font-size: 11px; cursor: pointer; z-index: 10; display: none;
-        }
-        .card-container:hover .card-del-btn { display: block; }
-        .card-del-btn:hover { background: #ef4444; color: #fff; }
-        .modal-mask {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.45); justify-content: center; align-items: center; z-index: 9999;
-        }
-        .modal-mask.active { display: flex; }
-        .modal-panel { background: #fff; padding: 24px; border-radius: 8px; width: 440px; max-width: 90%; }
-        .txt-input { width: 100%; padding: 9px 12px; margin: 6px 0 14px 0; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dynamic Hub V2</title>
+<link rel="stylesheet" href="css/CHUNG.css">
 </head>
 <body>
-    <div class="container">
-        <h1>BẢNG ĐIỀU KHIỂN CÔNG CỤ TÍCH HỢP</h1>
-        
-        <div class="system-status-bar">
-            <div class="status-badge">
-                <span id="srv-dot" class="dot"></span>
-                <span id="srv-text">Đang kết nối hệ thống...</span>
-            </div>
-            <div class="toolbar-group">
-                <input type="text" id="filter-input" class="search-box" placeholder="Tìm nhanh công cụ..." oninput="handleFilterModules()">
-                <button class="btn-action-hub" onclick="openModuleModal()">+ Tạo Thư Mục Module Mới</button>
-            </div>
-        </div>
+<div class="bg"><i></i><i></i><i></i></div>
+<div class="app">
+<aside class="side">
+  <div class="brand"><span class="logo">✦</span><div><b>Dynamic Hub</b><small>Personal Workspace</small></div></div>
+  <nav>
+    <button class="nav active" data-page="home">⌂ <span>Tổng quan</span></button>
+    <button class="nav" data-page="modules">▦ <span>Module</span></button>
+    <button class="nav" data-page="tools">⚡ <span>Công cụ</span></button>
+    <button class="nav" data-page="drive">◫ <span>Google Drive</span></button>
+    <button class="nav" data-page="ebook">▤ <span>Ebook / Sách</span></button>
+    <button class="nav" data-page="history">◷ <span>Lịch sử</span></button>
+    <button class="nav" data-page="settings">⚙ <span>Cài đặt</span></button>
+  </nav>
+  <div class="side-bottom"><button id="theme">☾ Chế độ giao diện</button><small>Local • Không cần server</small></div>
+</aside>
 
-        <div class="grid" id="modules-grid">
-            <div style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 40px;">
-                ⏳ Đang nạp danh mục công cụ...
-            </div>
-        </div>
-    </div>
+<main>
+<header>
+  <div><div class="eyebrow">PERSONAL CONTROL CENTER</div><h1 id="pageTitle">Tổng quan</h1></div>
+  <div class="actions"><button class="search" id="searchBtn">⌕ <span>Tìm kiếm</span><kbd>Ctrl K</kbd></button><button class="icon" id="addBtn">＋</button></div>
+</header>
 
-    <!-- Modal Tạo Thư Mục Module Mới -->
-    <div class="modal-mask" id="create-modal">
-        <div class="modal-panel">
-            <h3 style="margin-top:0;">Tạo Module Công Cụ Mới</h3>
-            <label style="font-size:13px; font-weight:500;">Tên thư mục (ví dụ: TIEN_ICH hoặc QUAN_LY):</label>
-            <input type="text" id="in-folder" class="txt-input" placeholder="TIEN_ICH">
-            
-            <label style="font-size:13px; font-weight:500;">Tên hiển thị:</label>
-            <input type="text" id="in-title" class="txt-input" placeholder="Bộ Tiện Ích Mới">
-            
-            <label style="font-size:13px; font-weight:500;">Biểu tượng (Icon Emoji):</label>
-            <input type="text" id="in-icon" class="txt-input" value="⚡">
-            
-            <label style="font-size:13px; font-weight:500;">Mô tả chức năng:</label>
-            <input type="text" id="in-desc" class="txt-input" placeholder="Mô tả công cụ...">
+<section id="home" class="page active">
+  <div class="hero">
+    <div><span class="pill">● ONLINE LOCAL</span><h2>Mọi công cụ của bạn,<br><em>trong một nơi.</em></h2><p>Trung tâm điều khiển cá nhân cho các module, link, tài liệu và tiện ích thường dùng.</p>
+    <div class="hero-actions"><button class="primary" data-page-jump="modules">Mở module →</button><button class="ghost" data-page-jump="tools">Công cụ nhanh</button></div></div>
+    <div class="orb"><span>✦</span></div>
+  </div>
+  <div class="stats">
+    <div class="stat"><small>MODULE</small><strong id="statModules">0</strong><span>đang quản lý</span></div>
+    <div class="stat"><small>YÊU THÍCH</small><strong id="statFav">0</strong><span>truy cập nhanh</span></div>
+    <div class="stat"><small>TRUY CẬP</small><strong id="statVisits">0</strong><span>lần mở module</span></div>
+    <div class="stat"><small>GHI CHÚ</small><strong id="statNotes">0</strong><span>ký tự đã lưu</span></div>
+  </div>
+  <div class="section-head"><h3>Truy cập nhanh</h3><button class="text-btn" data-page-jump="modules">Xem tất cả →</button></div>
+  <div class="cards" id="quickCards"></div>
+</section>
 
-            <div style="display:flex; justify-content:flex-end; gap:8px;">
-                <button onclick="closeModuleModal()" style="padding:8px 14px; border:1px solid #cbd5e1; background:#fff; border-radius:6px; cursor:pointer;">Hủy</button>
-                <button onclick="handleCreateModule()" class="btn-action-hub">Tạo Module</button>
-            </div>
-        </div>
-    </div>
+<section id="modules" class="page">
+  <div class="section-head"><div><h3>Module của bạn</h3><p class="muted">Các công cụ có sẵn trong repo và link cá nhân.</p></div><button class="primary" id="newModule">＋ Thêm module</button></div>
+  <div class="cards" id="moduleCards"></div>
+</section>
 
-    <script>
-        const CORE_PROTECTED = ['gmail', 'nén', 'nen', 'vi-translate', 'ocr', 'chupweb'];
-        let cachedModules = [];
+<section id="tools" class="page">
+  <div class="tool-grid">
+    <article class="tool"><h3>🧮 Máy tính</h3><input id="calc" placeholder="Ví dụ: (25*4)/2+10"><button class="primary" id="calcBtn">Tính</button><output id="calcOut">—</output></article>
+    <article class="tool"><h3>📝 Ghi chú</h3><textarea id="notes" placeholder="Ghi chú nhanh..."></textarea><div class="row"><button class="primary" id="saveNotes">Lưu</button><button class="ghost" id="clearNotes">Xóa</button></div></article>
+    <article class="tool"><h3>🔤 Đếm văn bản</h3><textarea id="textTool" placeholder="Dán văn bản vào đây..."></textarea><div class="mini-stats"><b id="chars">0</b> ký tự · <b id="words">0</b> từ · <b id="lines">0</b> dòng</div></article>
+    <article class="tool"><h3>🧹 JSON Formatter</h3><textarea id="jsonIn" placeholder='{"hello":"world"}'></textarea><div class="row"><button class="primary" id="jsonFormat">Format</button><button class="ghost" id="jsonMin">Minify</button></div><textarea id="jsonOut" readonly placeholder="Kết quả..."></textarea></article>
+    <article class="tool"><h3>🔗 Link nhanh</h3><input id="linkTitle" placeholder="Tên link"><input id="linkUrl" placeholder="https://..."><button class="primary" id="saveLink">Thêm link</button></article>
+    <article class="tool"><h3>🕒 Thời gian</h3><div class="clock" id="clock">00:00:00</div><p class="muted">Giờ hệ thống của máy bạn</p></article>
+  </div>
+</section>
 
-        // Danh mục cố định sử dụng khi chạy GitHub Pages
-        const DEFAULT_STATIC_MODULES = [
-            {
-                folder: 'CHUPWEB',
-                title: 'Chụp Cuộn Web Full',
-                icon: '📸',
-                desc: 'Chụp cuộn toàn trang web sắc nét không dính chuột.',
-                entry: 'CHUPWEB/CHUPWEB.html'
-            },
-            {
-                folder: 'GMAIL',
-                title: 'Quản Lý Gmail',
-                icon: '✉️',
-                desc: 'Giao diện tiện ích hỗ trợ gửi và phân loại thư điện tử.',
-                entry: 'GMAIL/GMAIL.html'
-            },
-            {
-                folder: 'NÉN',
-                title: 'Nén Tệp Tin',
-                icon: '🗜️',
-                desc: 'Bộ công cụ giảm dung lượng và tối ưu hóa tệp trực tuyến.',
-                entry: 'NÉN/NÉN.html'
-            },
-            {
-                folder: 'OCR',
-                title: 'Nhận Diện Chữ (OCR)',
-                icon: '🔍',
-                desc: 'Trích xuất văn bản từ hình ảnh và tài liệu scan.',
-                entry: 'OCR/OCR.html'
-            },
-            {
-                folder: 'Vi-translate',
-                title: 'Dịch Thuật Đa Ngữ',
-                icon: '🌐',
-                desc: 'Hỗ trợ dịch nhanh nội dung văn bản đa ngôn ngữ tiện lợi.',
-                entry: 'Vi-translate/Vi-translate.html'
-            }
-        ];
+<section id="drive" class="page">
+  <div class="empty-large"><div class="bigicon">◫</div><h2>Google Drive</h2><p>Lưu các thư mục Drive thường dùng ngay trên hub. Link được lưu cục bộ trên trình duyệt.</p><button class="primary" id="driveAdd">＋ Thêm thư mục Drive</button></div>
+  <div class="cards" id="driveCards"></div>
+</section>
 
-        function stripVietnameseMarks(str) {
-            return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-        }
+<section id="ebook" class="page">
+  <div class="empty-large"><div class="bigicon">▤</div><h2>Ebook / Sách</h2><p>Quản lý link đọc sách PDF, EPUB, MOBI hoặc thư mục Drive chứa sách.</p><button class="primary" id="ebookAdd">＋ Thêm thư viện sách</button></div>
+  <div class="cards" id="ebookCards"></div>
+</section>
 
-        async function refreshModules() {
-            const dot = document.getElementById('srv-dot');
-            const txt = document.getElementById('srv-text');
-            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+<section id="history" class="page"><div class="section-head"><h3>Lịch sử truy cập</h3><button class="ghost" id="clearHistory">Xóa lịch sử</button></div><div class="history" id="historyList"></div></section>
 
-            try {
-                const res = await fetch('/api/system/modules?t=' + Date.now());
-                if (!res.ok) throw new Error();
-                const modules = await res.json();
-                
-                cachedModules = modules;
-                dot.className = 'dot online';
-                txt.innerText = `Máy chủ: Hoạt động | ${modules.length} công cụ khả dụng`;
-                txt.style.color = '#10b981';
-                renderCards(cachedModules);
-            } catch (e) {
-                if (!isLocal) {
-                    dot.className = 'dot online';
-                    txt.innerText = `GitHub Pages: Trực tuyến | ${DEFAULT_STATIC_MODULES.length} công cụ`;
-                    txt.style.color = '#10b981';
-                    cachedModules = DEFAULT_STATIC_MODULES;
-                    renderCards(cachedModules);
-                } else {
-                    dot.className = 'dot offline';
-                    txt.innerText = 'Mất kết nối máy chủ! Vui lòng kiểm tra server.py';
-                    txt.style.color = '#ef4444';
-                }
-            }
-        }
+<section id="settings" class="page">
+  <div class="settings-grid">
+    <article class="tool"><h3>⚙ Dữ liệu</h3><p class="muted">Toàn bộ module, link, ghi chú và lịch sử chỉ lưu trên trình duyệt.</p><div class="row"><button class="primary" id="export">Xuất backup</button><button class="ghost" id="importBtn">Nhập backup</button><input type="file" id="importFile" accept=".json" hidden></div></article>
+    <article class="tool"><h3>🎨 Giao diện</h3><p class="muted">Đổi giao diện sáng/tối và hiệu ứng nền.</p><button class="ghost" id="theme2">Đổi giao diện</button></article>
+    <article class="tool"><h3>🗑 Dữ liệu cục bộ</h3><p class="muted">Xóa toàn bộ dữ liệu của Dynamic Hub trên trình duyệt hiện tại.</p><button class="danger" id="reset">Xóa toàn bộ dữ liệu</button></article>
+  </div>
+</section>
+</main>
+</div>
 
-        function renderCards(list) {
-            const grid = document.getElementById('modules-grid');
-            grid.innerHTML = '';
-
-            if (list.length === 0) {
-                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color:#64748b; padding:30px;">Không tìm thấy công cụ nào phù hợp.</div>';
-                return;
-            }
-
-            const seenEntries = new Set();
-
-            list.forEach(m => {
-                const entryKey = m.entry.toLowerCase().normalize('NFC');
-                if (seenEntries.has(entryKey)) return;
-                seenEntries.add(entryKey);
-
-                const cardWrap = document.createElement('div');
-                cardWrap.className = 'card-container';
-
-                let delBtn = '';
-                const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-                if (isLocal && !CORE_PROTECTED.includes(m.folder.toLowerCase().normalize('NFC'))) {
-                    delBtn = `<button class="card-del-btn" onclick="handleDeleteModule('${m.folder}', event)">✕ Xóa</button>`;
-                }
-
-                // Luôn dùng đường dẫn tương đối (bỏ dấu / ở đầu)
-                const targetLink = m.entry.replace(/^\/+/, '');
-
-                cardWrap.innerHTML = `
-                    ${delBtn}
-                    <a href="${encodeURI(targetLink)}" class="card" style="height:100%; box-sizing:border-box;">
-                        <div class="card-icon">${m.icon}</div>
-                        <div class="card-title">${m.title}</div>
-                        <div class="card-desc">${m.desc}</div>
-                    </a>
-                `;
-                grid.appendChild(cardWrap);
-            });
-        }
-
-        function handleFilterModules() {
-            const rawQuery = document.getElementById('filter-input').value.trim();
-            const query = stripVietnameseMarks(rawQuery);
-            
-            const filtered = cachedModules.filter(m => 
-                stripVietnameseMarks(m.title).includes(query) || 
-                stripVietnameseMarks(m.folder).includes(query) || 
-                stripVietnameseMarks(m.desc).includes(query)
-            );
-            renderCards(filtered);
-        }
-
-        function openModuleModal() { 
-            if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-                return alert('Tính năng tạo module chỉ khả dụng khi chạy server Python cục bộ!');
-            }
-            document.getElementById('create-modal').classList.add('active'); 
-        }
-
-        function closeModuleModal() { document.getElementById('create-modal').classList.remove('active'); }
-
-        async function handleCreateModule() {
-            const folder = document.getElementById('in-folder').value.trim();
-            const title = document.getElementById('in-title').value.trim();
-            const icon = document.getElementById('in-icon').value.trim() || '⚡';
-            const desc = document.getElementById('in-desc').value.trim();
-
-            if (!folder) return alert('Vui lòng nhập tên thư mục!');
-
-            try {
-                const res = await fetch('/api/system/create-module', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ folder, title, icon, desc })
-                });
-                const data = await res.json();
-                if (res.ok) {
-                    closeModuleModal();
-                    document.getElementById('in-folder').value = '';
-                    document.getElementById('in-title').value = '';
-                    document.getElementById('in-desc').value = '';
-                    refreshModules();
-                } else {
-                    alert('Lỗi: ' + data.error);
-                }
-            } catch(e) {
-                alert('Lỗi kết nối máy chủ!');
-            }
-        }
-
-        async function handleDeleteModule(folder, e) {
-            e.preventDefault();
-            e.stopPropagation();
-            if (!confirm(`Bạn có chắc muốn xóa vĩnh viễn thư mục module [${folder}]?`)) return;
-
-            try {
-                const res = await fetch('/api/system/delete-module', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ folder })
-                });
-                if (res.ok) {
-                    refreshModules();
-                } else {
-                    const data = await res.json();
-                    alert('Lỗi: ' + data.error);
-                }
-            } catch(e) {
-                alert('Lỗi kết nối khi gửi yêu cầu xóa!');
-            }
-        }
-
-        refreshModules();
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            setInterval(refreshModules, 3000);
-        }
-    </script>
-</body>
-</html>
+<div class="modal" id="modal"><div class="modal-box"><button class="close" id="close">×</button><h2 id="modalTitle">Thêm module</h2><label>Tên<input id="mName"></label><label>Mô tả<input id="mDesc"></label><label>Đường dẫn / URL<input id="mUrl" placeholder="CHUPWEB/CHUPWEB.html"></label><label>Icon<input id="mIcon" value="✦"></label><div class="row end"><button class="ghost" id="cancel">Hủy</button><button class="primary" id="saveModule">Lưu module</button></div></div></div>
+<div class="toast" id="toast"></div>
+<script src="js/CHUNG.js"></script>
+</body></html>
