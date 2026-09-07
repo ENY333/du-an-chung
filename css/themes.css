@@ -1,0 +1,2 @@
+/* Theme tokens live in base.css. This file is intentionally separate so a future theme can replace it without touching layout. */
+.theme-neon{--cyan:#00e5ff;--purple:#a65cff}.theme-quiet{--cyan:#8ab4ff;--purple:#b39ddb}
